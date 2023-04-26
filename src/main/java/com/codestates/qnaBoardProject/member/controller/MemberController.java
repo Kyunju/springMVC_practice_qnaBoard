@@ -2,12 +2,12 @@ package com.codestates.qnaBoardProject.member.controller;
 
 import com.codestates.qnaBoardProject.member.dto.MemberPatchDto;
 import com.codestates.qnaBoardProject.member.dto.MemberPostDto;
-import com.codestates.qnaBoardProject.member.dto.MemberResponseDto;
 import com.codestates.qnaBoardProject.member.entity.Member;
 import com.codestates.qnaBoardProject.member.mapper.MemberMapper;
 import com.codestates.qnaBoardProject.member.service.MemberService;
 import com.codestates.qnaBoardProject.response.MultiResponseDto;
 import com.codestates.qnaBoardProject.response.SingleResponseDto;
+import com.codestates.qnaBoardProject.utils.UriCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,7 @@ import java.util.List;
 @Validated
 @Slf4j
 public class MemberController {
+    private final static String MEMBER_DEFAULT_URL = "/v11/members";
     private final MemberService memberService;
     private final MemberMapper mapper;
 
@@ -34,10 +36,10 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity postMember(@Valid @RequestBody MemberPostDto memberPostDto) {
-        Member member = mapper.memberPostDtoToMember(memberPostDto);
-        return new ResponseEntity<>(
-                new SingleResponseDto<>(mapper.memberToMemberResponseDto(member)),
-                        HttpStatus.CREATED);
+        Member member = memberService.createMember(mapper.memberPostDtoToMember(memberPostDto));
+        URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, member.getMemberId());
+
+        return ResponseEntity.created(location).build();
     }
     @PatchMapping("/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
@@ -57,7 +59,7 @@ public class MemberController {
     public ResponseEntity getMembers(@Positive @RequestParam int page,
                                      @Positive @RequestParam int size) {
         // 전체 멤버 검색 로직 구현 (페이지네이션)
-        Page<Member> memberPage = memberService.findMembers(page, size);
+        Page<Member> memberPage = memberService.findMembers(page - 1, size);
         List<Member> members = memberPage.getContent();
 
         return new ResponseEntity<>(new MultiResponseDto<>(
