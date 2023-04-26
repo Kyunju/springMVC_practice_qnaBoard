@@ -1,5 +1,6 @@
 package com.codestates.qnaBoardProject.member.dto;
 
+import com.codestates.qnaBoardProject.member.entity.Member;
 import com.codestates.qnaBoardProject.validator.NotSpace;
 import lombok.Getter;
 
@@ -15,6 +16,6 @@ public class MemberPatchDto {
     @Pattern(regexp = "^010-\\d{3,4}-\\d{4}$",
             message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야합니다.")
     private String phone;
-
+    private Member.MemberStatus memberStatus;
     public void setMemberId(long memberId) {this.memberId = memberId;}
 }

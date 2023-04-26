@@ -1,5 +1,6 @@
 package com.codestates.qnaBoardProject.member.dto;
 
+import com.codestates.qnaBoardProject.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,4 +11,6 @@ public class MemberResponseDto {
     private String email;
     private String name;
     private String phone;
+    private Member.MemberStatus memberStatus;
+    public String getMemberStatus() {return memberStatus.getStatus();}
 }
