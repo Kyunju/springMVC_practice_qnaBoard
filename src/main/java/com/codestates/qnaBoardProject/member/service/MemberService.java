@@ -5,6 +5,9 @@ import com.codestates.qnaBoardProject.exception.ExceptionCode;
 import com.codestates.qnaBoardProject.member.entity.Member;
 import com.codestates.qnaBoardProject.member.repository.MemberRepository;
 import com.codestates.qnaBoardProject.stamp.Stamp;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -49,6 +52,11 @@ public class MemberService {
         // memberId를 통해서 member를 리턴
 
         return findVerifiedMember(memberId);
+    }
+
+    public Page<Member> findMembers(int page, int size) {
+       return memberRepository.findAll(PageRequest.of(page,size,
+                Sort.by("memberId").descending()));
     }
 
     public void deleteMember(long memberId) {
