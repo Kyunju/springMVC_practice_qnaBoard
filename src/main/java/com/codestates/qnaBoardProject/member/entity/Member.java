@@ -1,5 +1,6 @@
 package com.codestates.qnaBoardProject.member.entity;
 
+import com.codestates.qnaBoardProject.stamp.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,14 @@ public class Member {
     private LocalDateTime createdAt = LocalDateTime.now();
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
+    @OneToOne(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private Stamp stamp;
+    public void setStamp(Stamp stamp) {
+        this.stamp = stamp;
+        if (stamp.getMember() != this) {
+            stamp.setMember(this);
+        }
+    }
 
     public Member(String email) {
         this.email = email;
