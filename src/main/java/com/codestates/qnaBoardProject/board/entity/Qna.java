@@ -35,6 +35,15 @@ public class Qna {
     private Member member;
 
     // TODO: 답변 엔티티랑 연관관계 맵핑
+    @OneToOne(mappedBy = "qna")
+    private Reply reply;
+
+    public void setReply(Reply reply) {
+        this.reply = reply;
+        if (reply.getQna() != this){
+            reply.setQna(this);
+        }
+    }
 
     public enum QnaStatus {
         QUESTION_REGISTERED(1, "질문 등록"),
