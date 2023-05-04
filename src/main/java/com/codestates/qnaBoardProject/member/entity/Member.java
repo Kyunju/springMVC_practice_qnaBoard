@@ -1,5 +1,6 @@
 package com.codestates.qnaBoardProject.member.entity;
 
+import com.codestates.qnaBoardProject.board.entity.Qna;
 import com.codestates.qnaBoardProject.stamp.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -37,6 +39,9 @@ public class Member {
             stamp.setMember(this);
         }
     }
+
+    @OneToMany(mappedBy = "member")
+    private List<Qna> qna;
 
     public Member(String email) {
         this.email = email;
