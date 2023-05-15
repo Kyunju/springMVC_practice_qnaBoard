@@ -8,7 +8,9 @@ public enum ExceptionCode {
     NOT_IMPLEMENTATION(501, "Not Implementation"),
     INVALID_MEMBER_STATUS(400, "Invalid member status"),
     QNA_NOT_FOUND(404, "Qna not found"),
-    UNAUTHORIZED_DELETE_QUESTION(403, "Forbidden: User is not authorized to delete this question");
+    UNAUTHORIZED_DELETE_QUESTION(403, "Forbidden: User is not authorized to delete this question"),
+    UNAUTHORIZED_MODIFY_QUESTION(403, "Forbidden : User is not authorized to modify this question"),
+    DELETED_QUESTION(404, "Not Found : Deleted Question");
 
     @Getter
     private int status;
