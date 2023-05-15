@@ -37,11 +37,11 @@ public class MemberService {
 
         // null 이 아닌 부분만 가져온 멤버에 수정
         Optional.ofNullable(member.getName())
-                .ifPresent(name -> member.setName(name));
+                .ifPresent(name -> findMember.setName(name));
         Optional.ofNullable(member.getPhone())
-                .ifPresent(phone -> member.setPhone(phone));
+                .ifPresent(phone -> findMember.setPhone(phone));
         Optional.ofNullable(member.getMemberStatus())
-                .ifPresent(memberStatus -> member.setMemberStatus(memberStatus));
+                .ifPresent(memberStatus -> findMember.setMemberStatus(memberStatus));
         findMember.setModifiedAt(LocalDateTime.now());
 
         // 데이터베이스에 수정된 Member 엔티티 저장
