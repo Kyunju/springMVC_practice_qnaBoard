@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Reply {
+public class QnaAnswered {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long replyId;
@@ -23,12 +23,12 @@ public class Reply {
     private LocalDateTime modifyAt = LocalDateTime.now();
     @OneToOne
     @JoinColumn(name = "QNA_ID")
-    private Qna qna;
+    private QnaQuestion qnaQuestion;
 
-    public void setQna(Qna qna) {
-        this.qna = qna;
-        if (qna.getReply() != this) {
-            qna.setReply(this);
+    public void setQnaQuestion(QnaQuestion qnaQuestion) {
+        this.qnaQuestion = qnaQuestion;
+        if (qnaQuestion.getQnaAnswered() != this) {
+            qnaQuestion.setQnaAnswered(this);
         }
     }
 }

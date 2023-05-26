@@ -1,6 +1,6 @@
 package com.codestates.qnaBoardProject.member.entity;
 
-import com.codestates.qnaBoardProject.board.entity.Qna;
+import com.codestates.qnaBoardProject.board.entity.QnaQuestion;
 import com.codestates.qnaBoardProject.stamp.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +41,7 @@ public class Member {
     }
 
     @OneToMany(mappedBy = "member")
-    private List<Qna> qna;
+    private List<QnaQuestion> qnaQuestion;
 
     public Member(String email) {
         this.email = email;

@@ -1,6 +1,6 @@
 package com.codestates.qnaBoardProject.board.dto;
 
-import com.codestates.qnaBoardProject.board.entity.Qna;
+import com.codestates.qnaBoardProject.board.entity.QnaQuestion;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,8 +14,8 @@ public class QnaResponseDto {
     private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private Qna.QnaStatus qnaStatus;
-    private Qna.QnaVisibility qnaVisibility;
+    private QnaQuestion.QnaStatus qnaStatus;
+    private QnaQuestion.QnaVisibility qnaVisibility;
 
     public String  getQnaStatus() {
         return qnaStatus.getStatus();

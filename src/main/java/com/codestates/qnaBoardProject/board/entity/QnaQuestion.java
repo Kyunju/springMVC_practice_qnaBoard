@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Qna {
+public class QnaQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qnaId;
@@ -36,12 +36,12 @@ public class Qna {
 
     // TODO: 답변 엔티티랑 연관관계 맵핑
     @OneToOne(mappedBy = "qna")
-    private Reply reply;
+    private QnaAnswered qnaAnswered;
 
-    public void setReply(Reply reply) {
-        this.reply = reply;
-        if (reply.getQna() != this){
-            reply.setQna(this);
+    public void setQnaAnswered(QnaAnswered qnaAnswered) {
+        this.qnaAnswered = qnaAnswered;
+        if (qnaAnswered.getQnaQuestion() != this){
+            qnaAnswered.setQnaQuestion(this);
         }
     }
 

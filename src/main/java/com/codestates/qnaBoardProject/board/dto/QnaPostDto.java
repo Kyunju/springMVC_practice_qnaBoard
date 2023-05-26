@@ -1,8 +1,7 @@
 package com.codestates.qnaBoardProject.board.dto;
 
-import com.codestates.qnaBoardProject.board.entity.Qna;
+import com.codestates.qnaBoardProject.board.entity.QnaQuestion;
 import com.codestates.qnaBoardProject.member.entity.Member;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,7 +16,7 @@ public class QnaPostDto {
     private String title;
     @NotBlank(message = "질문은 공백이 아니어야 합니다.")
     private String body;
-    private Qna.QnaVisibility visibility;
+    private QnaQuestion.QnaVisibility visibility;
     public Member getMember() {
         Member member = new Member();
         member.setMemberId(memberId);

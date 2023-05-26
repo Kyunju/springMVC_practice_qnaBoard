@@ -1,7 +1,7 @@
 package com.codestates.qnaBoardProject.board.service;
 
 import com.codestates.qnaBoardProject.admin.Admin;
-import com.codestates.qnaBoardProject.board.entity.Qna;
+import com.codestates.qnaBoardProject.board.entity.QnaQuestion;
 import com.codestates.qnaBoardProject.board.repository.QnaRepository;
 import com.codestates.qnaBoardProject.exception.BusinessLogicException;
 import com.codestates.qnaBoardProject.exception.ExceptionCode;
@@ -25,53 +25,60 @@ public class QnaService {
         this.admin = admin;
     }
 
-    public Qna createQna(Qna qna) {
+    public QnaQuestion createQna(QnaQuestion qnaQuestion) {
         // 회원만 Qna 등록가능
         // 회원이 존재하는지 확인
-        Member findMember = memberService.findVerifiedMember(qna.getMember().getMemberId());
-        qna.setMember(findMember);
-        return qnaRepository.save(qna);
+        Member findMember = memberService.findVerifiedMember(qnaQuestion.getMember().getMemberId());
+        qnaQuestion.setMember(findMember);
+        return qnaRepository.save(qnaQuestion);
     }
 
-    public Qna updateQna(Qna qna) {
+    public QnaQuestion updateQna(QnaQuestion qnaQuestion) {
         // TODO: 비지니스 로직 구현
         // 1. 질문을 작성한 회원 또는 관리자가 맞는지 확인
-        Qna checkedQna = checkVerifiedQnaByMember(qna);
+        QnaQuestion checkedQnaQuestion = checkVerifiedQnaByMember(qnaQuestion);
 
         // 2.  Question_Answered 상태의 질문은 수정 할 수 없다.
-        if (checkedQna.getQnaStatus().getStepNumber() == 2)
+        if (checkedQnaQuestion.getQnaStatus().getStepNumber() == 2)
             throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_MODIFY_QUESTION);
 
         // 3. QnaStatus 수정을 Question_Answered로 관리자 이외가 바꾸려 한다면 에러
-        Optional.ofNullable(qna.getTitle())
-                .ifPresent(title -> checkedQna.setTitle(title));
-        Optional.ofNullable(qna.getBody())
-                .ifPresent(body -> checkedQna.setBody(body));
-        Optional.ofNullable(qna.getQnaStatus())
+        Optional.ofNullable(qnaQuestion.getTitle())
+                .ifPresent(title -> checkedQnaQuestion.setTitle(title));
+        Optional.ofNullable(qnaQuestion.getBody())
+                .ifPresent(body -> checkedQnaQuestion.setBody(body));
+        Optional.ofNullable(qnaQuestion.getQnaStatus())
                 .ifPresent(qnaStatus -> {
                     if (qnaStatus.getStepNumber() == 2) {
-                        Member findMember = memberService.findMember(qna.getMember().getMemberId());
+                        Member findMember = memberService.findMember(qnaQuestion.getMember().getMemberId());
                         if (!findMember.getEmail().equals(admin.getEMAIL()))
                             throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_MODIFY_QUESTION);
                     }
                     if (qnaStatus.getStepNumber() == 3) {
                         throw new BusinessLogicException(ExceptionCode.QNA_NOT_FOUND);
                     }
-                    checkedQna.setQnaStatus(qnaStatus);
+                    checkedQnaQuestion.setQnaStatus(qnaStatus);
                 });
-        Optional.ofNullable(qna.getQnaVisibility())
-                .ifPresent(qnaVisibility -> checkedQna.setQnaVisibility(qnaVisibility));
-        checkedQna.setModifiedAt(LocalDateTime.now());
+        Optional.ofNullable(qnaQuestion.getQnaVisibility())
+                .ifPresent(qnaVisibility -> checkedQnaQuestion.setQnaVisibility(qnaVisibility));
+        checkedQnaQuestion.setModifiedAt(LocalDateTime.now());
 
-        return qnaRepository.save(checkedQna);
+        return qnaRepository.save(checkedQnaQuestion);
     }
 
-    public Qna findQna(long qnaId) {
+    public QnaQuestion findQna(long qnaId, long memberId) {
         // TODO: 비지니스 로직 구현
-        return new Qna();
+        // 질문의 상태가 시크릿이라면 memberId가 일치해야지만 조회 가능
+        QnaQuestion findQnaQuestion = findVerifiedByQnaId(qnaId);
+        if (findQnaQuestion.getQnaVisibility().getVisibility().equals("비공개")) {
+            if (!(findQnaQuestion.getMember().getMemberId() == memberId))
+                throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_GET_QUESTION);
+        }
+
+        return findQnaQuestion;
     }
 
-    public Page<Qna> findQnas(int page, int size) {
+    public Page<QnaQuestion> findQnas(int page, int size) {
         // TODO: 비지니스 로직 구현
         return null;
     }
@@ -82,24 +89,24 @@ public class QnaService {
         // 3. 이미 삭제상태의 질문은 삭제 할 수 없음
 
         // 유효한 질문인지 검증
-        Qna findQna = findVerifiedByQnaId(qnaId);
+        QnaQuestion findQnaQuestion = findVerifiedByQnaId(qnaId);
 
     }
 
-    public Qna findVerifiedByQnaId(long qnaId) {
-        Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
-        Qna findQna = optionalQna.orElseThrow(
+    public QnaQuestion findVerifiedByQnaId(long qnaId) {
+        Optional<QnaQuestion> optionalQna = qnaRepository.findById(qnaId);
+        QnaQuestion findQnaQuestion = optionalQna.orElseThrow(
                 () -> new BusinessLogicException(ExceptionCode.QNA_NOT_FOUND)
         );
-        return findQna;
+        return findQnaQuestion;
     }
 
-    public Qna checkVerifiedQnaByMember(Qna qna) {
-        Qna findQna = findVerifiedByQnaId(qna.getQnaId());
-        if (!(findQna.getMember().getMemberId() == qna.getMember().getMemberId() ||
-                memberService.findVerifiedMember(qna.getMember().getMemberId())
+    public QnaQuestion checkVerifiedQnaByMember(QnaQuestion qnaQuestion) {
+        QnaQuestion findQnaQuestion = findVerifiedByQnaId(qnaQuestion.getQnaId());
+        if (!(findQnaQuestion.getMember().getMemberId() == qnaQuestion.getMember().getMemberId() ||
+                memberService.findVerifiedMember(qnaQuestion.getMember().getMemberId())
                         .getEmail().equals(admin.getEMAIL())))
             throw new BusinessLogicException(ExceptionCode.UNAUTHORIZED_MODIFY_QUESTION);
-        return findQna;
+        return findQnaQuestion;
     }
 }
