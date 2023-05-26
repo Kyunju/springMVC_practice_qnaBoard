@@ -35,7 +35,7 @@ public class QnaQuestion {
     private Member member;
 
     // TODO: 답변 엔티티랑 연관관계 맵핑
-    @OneToOne(mappedBy = "qna")
+    @OneToOne(mappedBy = "qnaQuestion")
     private QnaAnswered qnaAnswered;
 
     public void setQnaAnswered(QnaAnswered qnaAnswered) {
